@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { observer } from "mobx-react";
 import NumericInput from "react-native-numeric-input";
 
 // NativeBase Components
@@ -19,8 +20,10 @@ import {
 // Style
 import styles from "./styles";
 
+//Store
+import coffeeStore from "../../Store/coffeeStore";
+import cartStore from "../../Store/cartStore";
 //List
-import coffeeshops from "../CoffeeList/list";
 import CartButton from "../Buttons/CartButton";
 
 class CoffeeDetail extends Component {
@@ -40,9 +43,11 @@ class CoffeeDetail extends Component {
       option: value
     });
 
+  handlePress = () => cartStore.addItemToCart(item);
+
   render() {
     const coffeeshopID = this.props.navigation.getParam("coffeeshopID");
-    const coffeeshop = coffeeshops.find(
+    const coffeeshop = coffeeStore.coffeeshops.find(
       coffeeshop => coffeeshopID === coffeeshop.id
     );
     return (
@@ -58,7 +63,7 @@ class CoffeeDetail extends Component {
               </Left>
               <Body />
               <Right>
-                <Thumbnail bordered source={coffeeshop.img} />
+                <Thumbnail bordered source={{ uri: coffeeshop.img }} />
               </Right>
             </CardItem>
             <CardItem>
@@ -99,7 +104,11 @@ class CoffeeDetail extends Component {
               </Body>
 
               <Right>
-                <Button full style={styles.addButton}>
+                <Button
+                  full
+                  style={styles.addButton}
+                  onPress={this.handlePress}
+                >
                   <Text>Add</Text>
                 </Button>
               </Right>
@@ -116,4 +125,4 @@ CoffeeDetail.navigationOptions = ({ navigation }) => ({
   headerRight: <CartButton />
 });
 
-export default CoffeeDetail;
+export default observer(CoffeeDetail);
